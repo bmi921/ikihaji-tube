@@ -1,0 +1,6 @@
+import type { Group } from './group';
+import type { User } from './user';
+import type { Video } from './video';
+import type { ViewingHistory } from './view-history';
+
+export type { Group, User, Video, ViewingHistory };
