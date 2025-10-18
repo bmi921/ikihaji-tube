@@ -4,7 +4,7 @@ const saveButton = document.getElementById('save') as HTMLButtonElement;
 const statusDiv = document.getElementById('status') as HTMLDivElement;
 
 document.addEventListener('DOMContentLoaded', () => {
-  chrome.storage.local.get(['userId', 'groupIds'], (result) => {
+  chrome.storage.local.get(['userId', 'groupIds'], result => {
     if (result.userId) {
       userIdInput.value = result.userId;
     }
@@ -16,7 +16,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 saveButton.addEventListener('click', () => {
   const userId = userIdInput.value;
-  const groupIds = groupIdsInput.value.split(',').map(s => s.trim()).filter(s => s);
+  const groupIds = groupIdsInput.value
+    .split(',')
+    .map(s => s.trim())
+    .filter(s => s);
 
   if (!userId) {
     statusDiv.textContent = 'User ID is required.';

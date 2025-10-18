@@ -3,17 +3,13 @@ import type { App } from '@ikihaji-tube/api';
 import type { User } from '@ikihaji-tube/core/model';
 import { getBaseUrl } from '@ikihaji-tube/core/util';
 
-export const getUsers = async (): Promise<User[]> => {
+export const getUsers = async (groupId: string): Promise<User[]> => {
   const client = treaty<App>(getBaseUrl({ app: 'api' }).toString());
-  console.log('Fetching groups data from API at: ', getBaseUrl({ app: 'api' }).toString());
+  const { data, error } = await client.api.groups({ groupId }).users.get();
 
-  const res = await client.api.groups.get();
-  console.log('groups data was fetched: ', res.data);
-  if (res.data === null) {
-    throw new Error('Failed to fetch groups');
+  if (error) {
+    throw new Error(`Failed to fetch users: ${error}`);
   }
 
-  const users = res.data.flatMap(group => group.users);
-
-  return users;
+  return data;
 };

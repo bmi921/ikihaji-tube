@@ -1,4 +1,4 @@
-import { type CommandInteraction } from 'discord.js';
+import type { CommandInteraction } from 'discord.js';
 
 export const groupIdCommand = async (interaction: CommandInteraction) => {
   if (!interaction.guildId) {

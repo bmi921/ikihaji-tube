@@ -10,6 +10,7 @@ export const viewingRandomCommand = async (interaction: CommandInteraction) => {
   await interaction.deferReply();
 
   await viewingRandom(
+    interaction.guild.id,
     async userId => {
       return await interaction.guild!.members.fetch(userId);
     },
@@ -20,10 +21,11 @@ export const viewingRandomCommand = async (interaction: CommandInteraction) => {
 };
 
 export const viewingRandom = async (
+  groupId: string,
   userIdToGuildMember: (userId: string) => Promise<GuildMember | null>,
   reply: (embeds: EmbedBuilder[]) => Promise<void>,
 ) => {
-  const users = await getUsers();
+  const users = await getUsers(groupId);
 
   const embeds =
     users.length > 0

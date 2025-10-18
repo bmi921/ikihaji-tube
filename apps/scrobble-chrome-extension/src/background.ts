@@ -10,34 +10,32 @@ chrome.runtime.onMessage.addListener(message => {
 
   match(message.action)
     .with('push-video-to-viewing-history', async () => {
-      chrome.storage.local.get(['userId', 'groupIds'], async (result) => {
-        const { userId, groupIds } = result;
+      const { userId, groupIds } = await chrome.storage.local.get(['userId', 'groupIds']);
 
-        if (!userId || !groupIds || groupIds.length === 0) {
-          // biome-ignore lint/suspicious/noConsoleLog:
-          console.error('User ID or Group ID is not set.');
-          return;
-        }
-
-        const video: Video = message.data;
-        const groupId = groupIds[0]; // Use the first group ID
-
-        const endpoint = `${baseUrl}/groups/${groupId}/users/${userId}/viewing-history`;
+      if (!(userId && groupIds) || groupIds.length === 0) {
         // biome-ignore lint/suspicious/noConsoleLog:
-        console.log(`🚀 Sending viewing history to API...\n  - Endpoint: ${endpoint}\n  - Payload:`, [video]);
+        console.log('User ID or Group ID is not set.');
+        return;
+      }
 
-        const res = await client.api
-          .groups({
-            groupId: groupId,
-          })
-          .users({
-            userId: userId,
-          })
-          ['viewing-history'].post([video]);
+      const video: Video = message.data;
+      const groupId = groupIds[0]; // Use the first group ID
 
-        // biome-ignore lint/suspicious/noConsoleLog:
-        console.log('✅ Updated viewing history:', res.data?.body);
-      });
+      const endpoint = `${baseUrl}/api/groups/${groupId}/users/${userId}/viewing-history`;
+      // biome-ignore lint/suspicious/noConsoleLog:
+      console.log(`🚀 Sending viewing history to API...\n  - Endpoint: ${endpoint}\n  - Payload:`, [video]);
+
+      const res = await client.api
+        .groups({
+          groupId: groupId,
+        })
+        .users({
+          userId: userId,
+        })
+        ['viewing-history'].post([video]);
+
+      // biome-ignore lint/suspicious/noConsoleLog:
+      console.log('✅ Updated viewing history:', res.data);
     })
     .otherwise(() => {});
 });

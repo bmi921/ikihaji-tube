@@ -1,40 +1,9 @@
 import { cors } from '@elysiajs/cors';
-import type { Group, User, Video } from '@ikihaji-tube/core/model';
+import type { User, Video } from '@ikihaji-tube/core/model';
+import { eq, inArray } from 'drizzle-orm';
 import { Elysia, type TSchema, t } from 'elysia';
-
-// Sample data for testing
-export const groups: Group[] = [
-  {
-    id: '1428370457014566945',
-    users: [
-      {
-        id: '1077274231693389875',
-        viewingHistory: [
-          {
-            id: 'video_001',
-            title: 'a',
-            thumbnailUrl: 'https://i.ytimg.com/vi/XFkzRNyygfk/hqdefault.jpg',
-          },
-          {
-            id: 'video_002',
-            title: 'The Beatles - Let It Be (Remastered 2009)',
-            thumbnailUrl: 'https://i.ytimg.com/vi/QDYfEBY9NM4/hqdefault.jpg',
-          },
-        ],
-      },
-      {
-        id: '1077274231693389875',
-        viewingHistory: [
-          {
-            id: 'video_003',
-            title: 'Daft Punk - Get Lucky (Official Audio)',
-            thumbnailUrl: 'https://i.ytimg.com/vi/5NV6Rdv1a3I/hqdefault.jpg',
-          },
-        ],
-      },
-    ],
-  },
-];
+import { db } from '../../db/db';
+import { groups, users, videos, viewingHistory } from '../../db/schema';
 
 export const app = new Elysia({
   prefix: '/api',
@@ -46,70 +15,82 @@ export const app = new Elysia({
     }),
   )
   .get('/', () => 'Hello, world!')
-  .get('/groups', () => {
-    // biome-ignore lint/suspicious/noConsoleLog:
-    console.log('[/groups]', groups);
+  .get('/groups/:groupId/users', async ({ params }) => {
+    const { groupId } = params;
 
-    return groups;
-  })
-  .get('/groups/:groupId', ({ params }) => {
-    const groupId = params.groupId;
-    // biome-ignore lint/suspicious/noConsoleLog:
-    console.log('[/groups/:groupId]', groupId);
+    const groupUsers = await db.select().from(users).where(eq(users.groupId, groupId));
+    const userIds = groupUsers.map(user => user.id);
 
-    const group = groups.find(g => g.id === groupId);
-    if (!group) {
-      return null;
+    if (userIds.length === 0) {
+      return [];
     }
 
-    // biome-ignore lint/suspicious/noConsoleLog:
-    console.log('[/groups/:groupId]', group);
+    const histories = await db.select().from(viewingHistory).where(inArray(viewingHistory.userId, userIds));
 
-    return group;
-  })
-  .get('/groups/:groupId/users', ({ params }) => {
-    const group = groups.find(g => g.id === params.groupId);
-    return group ? group.users : null;
-  })
-  .get('/groups/:groupId/users/:userId', ({ params }) => {
-    const group = groups.find(g => g.id === params.groupId);
-    const user = group?.users.find(u => u.id === params.userId);
-    return user || null;
+    const videoIds = histories.map(h => h.videoId).filter((id): id is string => id !== null);
+    if (videoIds.length === 0) {
+      return userIds.map(userId => ({
+        id: userId,
+        viewingHistory: [],
+      }));
+    }
+
+    const uniqueVideoIds = [...new Set(videoIds)];
+
+    const videosData = await db.select().from(videos).where(inArray(videos.id, uniqueVideoIds));
+
+    const videosMap = new Map(videosData.map(v => [v.id, v]));
+
+    const userHistories = new Map<string, Video[]>();
+
+    for (const history of histories) {
+      if (history.userId && history.videoId) {
+        const video = videosMap.get(history.videoId);
+        if (video) {
+          if (!userHistories.has(history.userId)) {
+            userHistories.set(history.userId, []);
+          }
+          userHistories.get(history.userId)!.push(video);
+        }
+      }
+    }
+
+    const resultUsers: User[] = userIds.map(userId => ({
+      id: userId,
+      viewingHistory: userHistories.get(userId) || [],
+    }));
+
+    return resultUsers;
   })
   .post(
     '/groups/:groupId/users/:userId/viewing-history',
-    ({ body, params }) => {
+    async ({ body, params }) => {
+      const { groupId, userId } = params;
+
       // biome-ignore lint/suspicious/noConsoleLog:
-      console.log(
-        `[POST /viewing-history] groupId: ${params.groupId}, userId: ${params.userId}, body:`, body
-      );
+      console.log(`[POST /viewing-history] groupId: ${groupId}, userId: ${userId}, body:`, body);
 
-      let group = groups.find(g => g.id === params.groupId);
-      if (!group) {
-        // Create a new group if it doesn't exist
-        const newGroup: Group = {
-          id: params.groupId,
-          users: [],
-        };
-        groups.push(newGroup);
-        group = newGroup;
+      // 1. Upsert Group
+      await db.insert(groups).values({ id: groupId }).onConflictDoNothing();
+
+      // 2. Upsert User
+      await db.insert(users).values({ id: userId, groupId }).onConflictDoNothing();
+
+      if (body.length === 0) {
+        return { status: 200, body: 'No new videos to add.' };
       }
 
-      let user = group.users.find(u => u.id === params.userId);
+      // 3. Upsert Videos
+      await db.insert(videos).values(body).onConflictDoNothing();
 
-      if (!user) {
-        const newUser: User = {
-          id: params.userId,
-          viewingHistory: body,
-        };
-        group.users.push(newUser);
+      // 4. Insert Viewing History
+      const historyEntries = body.map(video => ({
+        userId,
+        videoId: video.id,
+      }));
+      await db.insert(viewingHistory).values(historyEntries);
 
-        return { status: 201, body: newUser.viewingHistory };
-      }
-
-      user.viewingHistory.push(...body);
-
-      return { status: 200, body: user.viewingHistory };
+      return { status: 201, body: 'Viewing history recorded.' };
     },
     {
       body: t.Array(

@@ -16,6 +16,7 @@ export const viewingSummaryCommand = async (interaction: CommandInteraction) => 
   await interaction.deferReply();
 
   await viewingSummary(
+    interaction.guild.id,
     async userId => {
       return await interaction.guild!.members.fetch(userId);
     },
@@ -26,10 +27,11 @@ export const viewingSummaryCommand = async (interaction: CommandInteraction) => 
 };
 
 export const viewingSummary = async (
+  groupId: string,
   userIdToGuildMember: (userId: string) => Promise<GuildMember | null>,
   reply: (embeds: EmbedBuilder[]) => Promise<void>,
 ) => {
-  const users = await getUsers();
+  const users = await getUsers(groupId);
 
   const videoAndUserRelations = users
     .reduce<VideoAndUserRelation[]>((acc, user) => {
@@ -52,7 +54,7 @@ export const viewingSummary = async (
           videoAndUserRelations.map(async relation => {
             const coViewers = await Promise.all(
               relation.users.map(async user => {
-                // biome-ignore lint/suspicious/noConsoleLog: 
+                // biome-ignore lint/suspicious/noConsoleLog:
                 console.log('Fetching user from Discord:', user.id);
                 const member = await userIdToGuildMember(user.id);
                 if (!member) {
