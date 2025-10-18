@@ -102,10 +102,5 @@ bun turbo run dev
 - `packages/core`: アプリケーション間で共有されるコアロジック・型定義
 - `packages/tsconfig`: 共有の TypeScript 設定
 
-## 🤝 コントリビュート
-
-Issue や Pull Request はいつでも歓迎します。お気軽にどうぞ！
-
-## 📜 ライセンス
-
-このプロジェクトは [MIT License](./LICENSE.md) の下で公開されています。
+## 📒 リリースノート
+- v0.1.0 2025/10/19 初期リリース 
