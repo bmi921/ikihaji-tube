@@ -10,13 +10,11 @@ IkihajiTube は、YouTube の視聴履歴（生き恥）を友達と共有し、
 <img width="300" height="445" alt="スクリーンショット 2025-10-18 17 26 09" src="https://github.com/user-attachments/assets/aa74389b-2470-4d30-8f48-fcae4d19aaa0" />
 
 ## ☘️ 使い方
-[scrobble-chrome-extension.zip](https://github.com/bmi921/ikihaji-tube/releases/tag/v0.1.0)
-をダウンロードし、解凍してchrome拡張機能としてブラウザでで読み込んでください。
-[chrome拡張機能管理画面](chrome://extensions)より、「パッケージ化されていない拡張機能を読み込む」を選択し、ルートフォルダで読み込んでください。
-読み込めたら、拡張機能を起動し`userId`, `groupId`をGUI画面から入力してください。
+[最新リリース](https://github.com/bmi921/ikihaji-tube/releases/tag/v0.1.0)からchrome拡張機能である`scrobble-chrome-extension.crx`をダウンロードしてください。そのあと、
+[chrome拡張機能管理画面](chrome://extensions)の画面に`scrobble-chrome-extension.crx`ファイルをドラッグ&ドロップしてください。インストールできたら、拡張機能を起動します。ポップアップが表示されたら、`userId`, `groupId`を画面から入力してください。
 
-- `userId`はdiscordのユーザーIDで、プロフィールからクリップボードにコピーできます。
-- `groupId`は、ikihaji-tubeのディスコードボットを使用したいサーバーに招待し、`/groupid`コマンドを叩くことで確認できます。discordのギルドIDと同じです。
+- `userId`はdiscordのユーザーIDです。ユーザーIDは、discord上のアイコンをクリックし、「ユーザーIDをコピー」を押すことでクリップボードにコピーできます。
+- `groupId`は、ikihaji-tubeのディスコードボットを使用したいサーバーに招待し、`/groupid`コマンドを叩くことで確認できます。discordのギルドIDでと同じです。
 
 ## ✨ 特徴
 
