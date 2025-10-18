@@ -3,11 +3,14 @@
 [![LICENSE](https://img.shields.io/badge/license-MIT-blue.svg)](./LICENSE.md)
 
 IkihajiTube は、YouTube の視聴履歴（生き恥）を友達と共有し、友情を深める discord bot です。
+- 複数人が視聴した動画を共有する
+- 誰かが視聴した動画をランダムに共有する
+機能を好きなサーバーで定期実行できます。
+<img width="300" height="474" alt="original-icon" src="https://github.com/user-attachments/assets/9407adc9-f354-4e26-9b55-a000befbbf0e" />
+<img width="300" height="477" alt="スクリーンショット 2025-10-19 0 58 13" src="https://github.com/user-attachments/assets/ef9edf2e-6e93-4ea6-b68a-bcbbfbd825b8" />
 
 
 
-<img width="300" height="463" alt="スクリーンショット 2025-10-18 17 25 50" src="https://github.com/user-attachments/assets/e246b2c0-ea3b-4a34-a8e1-1f2d75645905" />
-<img width="300" height="445" alt="スクリーンショット 2025-10-18 17 26 09" src="https://github.com/user-attachments/assets/aa74389b-2470-4d30-8f48-fcae4d19aaa0" />
 
 ## ☘️ 使い方
 [最新リリース](https://github.com/bmi921/ikihaji-tube/releases/tag/v0.1.0)からchrome拡張機能である`scrobble-chrome-extension.crx`をダウンロードしてください。そのあと、
@@ -15,6 +18,8 @@ IkihajiTube は、YouTube の視聴履歴（生き恥）を友達と共有し、
 
 - `userId`はdiscordのユーザーIDです。ユーザーIDは、discord上のアイコンをクリックし、「ユーザーIDをコピー」を押すことでクリップボードにコピーできます。
 - `groupId`は、ikihaji-tubeのディスコードボットを使用したいサーバーに招待し、`/groupid`コマンドを叩くことで確認できます。discordのギルドIDでと同じです。
+
+`/register`コマンドでは、一日一回、定期実行させることができます。使用したいチャンネルでコマンドを使用してください。
 
 ## ✨ 特徴
 
