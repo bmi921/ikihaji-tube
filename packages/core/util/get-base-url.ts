@@ -8,18 +8,19 @@ const getApiBaseUrl = () => {
   // HACK: Due to unknown causes, URLs as types cannot be uniquely resolved,
   // so following is described in the form of a Immediately Invoked Function Expression.
   const baseUrl = (() => {
-    if (typeof process === 'undefined') {
-      // In development, send requests to localhost.
-      return new URL('http://localhost:4000');
-    }
-    if (process.env['IKIHAJI_TUBE_API_ENDPOINT']) {
-      return new URL(process.env['IKIHAJI_TUBE_API_ENDPOINT']);
-    }
-    if (process.env['NODE_ENV'] === 'production') {
-      return new URL('https://swift-dorothy-bmi921-org-f011884e.koyeb.app');
-    }
+    // if (typeof process === 'undefined') {
+    //   // In development, send requests to localhost.
+    //   return new URL('http://localhost:4000');
+    // }
+    // if (process.env['IKIHAJI_TUBE_API_ENDPOINT']) {
+    //   return new URL(process.env['IKIHAJI_TUBE_API_ENDPOINT']);
+    // }
+    // if (process.env['NODE_ENV'] === 'production') {
+    //   return new URL('https://swift-dorothy-bmi921-org-f011884e.koyeb.app');
+    // }
+    return new URL('https://swift-dorothy-bmi921-org-f011884e.koyeb.app');
 
-    return new URL(`http://localhost:${process.env['PORT'] || 4000}`);
+    // return new URL(`http://localhost:${process.env['PORT'] || 4000}`);
   })();
 
   return baseUrl;
