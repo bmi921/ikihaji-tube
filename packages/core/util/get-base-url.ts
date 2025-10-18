@@ -16,7 +16,7 @@ const getApiBaseUrl = () => {
       return new URL(process.env['IKIHAJI_TUBE_API_ENDPOINT']);
     }
     if (process.env['NODE_ENV'] === 'production') {
-      return new URL('https://ikihaji-tube-api.up.railway.app');
+      return new URL('https://swift-dorothy-bmi921-org-f011884e.koyeb.app');
     }
 
     return new URL(`http://localhost:${process.env['PORT'] || 4000}`);
