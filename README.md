@@ -9,6 +9,15 @@ IkihajiTube は、YouTube の視聴履歴（生き恥）を友達と共有し、
 <img width="300" height="463" alt="スクリーンショット 2025-10-18 17 25 50" src="https://github.com/user-attachments/assets/e246b2c0-ea3b-4a34-a8e1-1f2d75645905" />
 <img width="300" height="445" alt="スクリーンショット 2025-10-18 17 26 09" src="https://github.com/user-attachments/assets/aa74389b-2470-4d30-8f48-fcae4d19aaa0" />
 
+## ☘️ 使い方
+[scrobble-chrome-extension.zip](https://github.com/bmi921/ikihaji-tube/releases/tag/v1.0.0)
+をダウンロードし、解凍してchrome拡張機能としてブラウザでで読み込んでください。
+[chrome拡張機能管理画面](chrome://extensions)より、「パッケージ化されていない拡張機能を読み込む」を選択し、ルートフォルダで読み込んでください。
+読み込めたら、拡張機能を起動し`userId`, `groupId`をGUI画面から入力してください。
+
+- `userId`はdiscordのユーザーIDで、プロフィールからクリップボードにコピーできます。
+- `groupId`は、ikihaji-tubeのディスコードボットを使用したいサーバーに招待し、`/groupid`コマンドを叩くことで確認できます。discordのギルドIDと同じです。
+
 ## ✨ 特徴
 
 - **視聴履歴の自動収集**: Chrome 拡張機能がバックグラウンドで YouTube の視聴履歴を自動的に収集します。
@@ -29,9 +38,9 @@ IkihajiTube は、YouTube の視聴履歴（生き恥）を友達と共有し、
 | **フロントエンド** | [TypeScript](https://www.typescriptlang.org/) (Chrome Extension) |
 | **コンテナ**       | [Docker](https://www.docker.com/)                                |
 
-## 🚀 使い方
+## 🚀 開発環境構築
 
-### 1. 前提条件
+### 1. ツール
 
 - [Bun](https://bun.sh/docs/installation)
 - [Docker](https://docs.docker.com/get-docker/)
@@ -47,7 +56,7 @@ cd ikihaji-tube
 bun install
 ```
 
-### 3. 設定
+### 3. 環境変数
 
 `.env.example` をコピーして `.env` ファイルを作成し、中身を編集します。
 
