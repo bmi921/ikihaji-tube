@@ -12,7 +12,13 @@ export const viewingRandomCommand = async (interaction: CommandInteraction) => {
   await viewingRandom(
     interaction.guild.id,
     async userId => {
-      return await interaction.guild!.members.fetch(userId);
+      try {
+        return await interaction.guild!.members.fetch(userId);
+      } catch {
+        // biome-ignore lint/suspicious/noConsoleLog:
+        console.log(`Failed to fetch user ${userId} from guild`);
+        return null;
+      }
     },
     async embeds => {
       await interaction.editReply({ embeds });
@@ -27,20 +33,20 @@ export const viewingRandom = async (
 ) => {
   const users = await getUsers(groupId);
 
-  const embeds =
+  const embedsResult =
     users.length > 0
       ? await Promise.all(
           users.map(async user => {
             const randomVideo = user.viewingHistory[Math.floor(Math.random() * user.viewingHistory.length)];
             if (!randomVideo) {
-              throw new Error('Failed to get random video');
+              return null;
             }
 
             // biome-ignore lint/suspicious/noConsoleLog:
             console.log('Fetching user from Discord:', user.id);
             const viewedUser = await userIdToGuildMember(user.id);
             if (!viewedUser) {
-              throw new Error(`Failed to fetch user: ${user.id}`);
+              return null;
             }
 
             return new EmbedBuilder()
@@ -53,14 +59,20 @@ export const viewingRandom = async (
               .setColor(0xc37d9b);
           }),
         )
-      : [
-          new EmbedBuilder()
-            .setTitle('視聴履歴がありません')
-            .setDescription('まずは動画を視聴してみましょう！')
-            .setFooter({ text: 'Random selection of videos viewed by each user individually' })
-            .setTimestamp()
-            .setColor(0xc37d9b),
-        ];
+      : [];
 
-  await reply(embeds);
+  const embeds = embedsResult.filter((embed): embed is EmbedBuilder => embed !== null);
+
+  if (embeds.length > 0) {
+    await reply(embeds);
+  } else {
+    await reply([
+      new EmbedBuilder()
+        .setTitle('視聴履歴がありません')
+        .setDescription('まずは動画を視聴してみましょう！')
+        .setFooter({ text: 'Random selection of videos viewed by each user individually' })
+        .setTimestamp()
+        .setColor(0xc37d9b),
+    ]);
+  }
 };
