@@ -10,7 +10,7 @@ IkihajiTube は、YouTube の視聴履歴（生き恥）を友達と共有し、
 <img width="300" height="445" alt="スクリーンショット 2025-10-18 17 26 09" src="https://github.com/user-attachments/assets/aa74389b-2470-4d30-8f48-fcae4d19aaa0" />
 
 ## ☘️ 使い方
-[scrobble-chrome-extension.zip](https://github.com/bmi921/ikihaji-tube/releases/tag/v1.0.0)
+[scrobble-chrome-extension.zip](https://github.com/bmi921/ikihaji-tube/releases/tag/v0.1.0)
 をダウンロードし、解凍してchrome拡張機能としてブラウザでで読み込んでください。
 [chrome拡張機能管理画面](chrome://extensions)より、「パッケージ化されていない拡張機能を読み込む」を選択し、ルートフォルダで読み込んでください。
 読み込めたら、拡張機能を起動し`userId`, `groupId`をGUI画面から入力してください。
