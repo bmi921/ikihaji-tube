@@ -18,7 +18,13 @@ export const viewingSummaryCommand = async (interaction: CommandInteraction) => 
   await viewingSummary(
     interaction.guild.id,
     async userId => {
-      return await interaction.guild!.members.fetch(userId);
+      try {
+        return await interaction.guild!.members.fetch(userId);
+      } catch {
+        // biome-ignore lint/suspicious/noConsoleLog:
+        console.log(`Failed to fetch user ${userId} from guild`);
+        return null;
+      }
     },
     async embeds => {
       await interaction.editReply({ embeds });
@@ -50,41 +56,48 @@ export const viewingSummary = async (
 
   const embeds =
     videoAndUserRelations.length > 0
-      ? await Promise.all(
-          videoAndUserRelations.map(async relation => {
-            const coViewers = await Promise.all(
-              relation.users.map(async user => {
-                // biome-ignore lint/suspicious/noConsoleLog:
-                console.log('Fetching user from Discord:', user.id);
-                const member = await userIdToGuildMember(user.id);
-                if (!member) {
-                  throw new Error(`Failed to fetch user: ${user.id}`);
-                }
+      ? (
+          await Promise.all(
+            videoAndUserRelations.map(async relation => {
+              const coViewers = (
+                await Promise.all(
+                  relation.users.map(user => {
+                    // biome-ignore lint/suspicious/noConsoleLog:
+                    console.log('Fetching user from Discord:', user.id);
+                    return userIdToGuildMember(user.id);
+                  }),
+                )
+              ).filter((member): member is GuildMember => member !== null);
 
-                return member;
-              }),
-            );
+              if (coViewers.length < 2) {
+                return null;
+              }
 
-            const usersJoined = coViewers.map(member => member.displayName).join(' と ');
-            return new EmbedBuilder()
-              .setTitle('複数人が視聴した動画があります！')
-              .setDescription(
-                `${usersJoined} はこの動画を視聴しました\n[${relation.video.title}](https://www.youtube.com/watch?v=${relation.video.id})`,
-              )
-              .setImage(`${relation.video.thumbnailUrl}`)
-              .setFooter({ text: 'Videos viewed by multiple users' })
-              .setTimestamp()
-              .setColor(0xc37d9b);
-          }),
-        )
-      : [
-          new EmbedBuilder()
-            .setTitle('複数人が視聴した動画はありません')
-            .setDescription('まずは動画を視聴してみましょう！')
-            .setFooter({ text: 'Videos viewed by multiple users' })
-            .setTimestamp()
-            .setColor(0xc37d9b),
-        ];
+              const usersJoined = coViewers.map(member => member.displayName).join(' と ');
+              return new EmbedBuilder()
+                .setTitle('複数人が視聴した動画があります！')
+                .setDescription(
+                  `${usersJoined} はこの動画を視聴しました\n[${relation.video.title}](https://www.youtube.com/watch?v=${relation.video.id})`,
+                )
+                .setImage(`${relation.video.thumbnailUrl}`)
+                .setFooter({ text: 'Videos viewed by multiple users' })
+                .setTimestamp()
+                .setColor(0xc37d9b);
+            }),
+          )
+        ).filter((embed): embed is EmbedBuilder => embed !== null)
+      : [];
 
-  await reply(embeds);
+  if (embeds.length > 0) {
+    await reply(embeds);
+  } else {
+    await reply([
+      new EmbedBuilder()
+        .setTitle('複数人が視聴した動画はありません')
+        .setDescription('まずは動画を視聴してみましょう！')
+        .setFooter({ text: 'Videos viewed by multiple users' })
+        .setTimestamp()
+        .setColor(0xc37d9b),
+    ]);
+  }
 };
