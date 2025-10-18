@@ -4,6 +4,11 @@
 
 IkihajiTube は、YouTube の視聴履歴（生き恥）を友達と共有し、友情を深める discord bot です。
 
+
+
+<img width="300" height="463" alt="スクリーンショット 2025-10-18 17 25 50" src="https://github.com/user-attachments/assets/e246b2c0-ea3b-4a34-a8e1-1f2d75645905" />
+<img width="300" height="445" alt="スクリーンショット 2025-10-18 17 26 09" src="https://github.com/user-attachments/assets/aa74389b-2470-4d30-8f48-fcae4d19aaa0" />
+
 ## ✨ 特徴
 
 - **視聴履歴の自動収集**: Chrome 拡張機能がバックグラウンドで YouTube の視聴履歴を自動的に収集します。
