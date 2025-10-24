@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>IkihajiTube Settings</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      width: 300px;
+      padding: 10px;
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    #status {
+      margin-top: 10px;
+      color: green;
+    }
+  </style>
+</head>
+<body>
+  <h1>Settings</h1>
+  <div class="form-group">
+    <label for="userId">User ID</label>
+    <input type="text" id="userId" name="userId">
+  </div>
+  <div class="form-group">
+    <label for="groupIds">Group IDs (comma separated)</label>
+    <input type="text" id="groupIds" name="groupIds">
+  </div>
+  <button id="save">Save</button>
+  <div id="status"></div>
+
+  <script src="./popup.js"></script>
+</body>
+</html>
