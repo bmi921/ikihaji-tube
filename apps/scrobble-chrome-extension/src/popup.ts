@@ -171,7 +171,7 @@ saveButton.addEventListener('click', () => {
   const guildName = guildNameSpan.textContent;
   const guildAvatar = guildAvatarImg.src;
 
-  if (userId && groupIds) {
+  if (!userId || groupIdsInput.value === '') {
     statusDiv.textContent = 'User ID and Server ID are required.';
     statusDiv.style.color = 'red';
     return;
