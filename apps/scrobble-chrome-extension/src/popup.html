@@ -1,56 +1,131 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <title>IkihajiTube Settings</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      width: 300px;
-      padding: 10px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin-bottom: 5px;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 8px;
-      box-sizing: border-box;
-    }
-    button {
-      width: 100%;
-      padding: 10px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    #status {
-      margin-top: 10px;
-      color: green;
-    }
-  </style>
-</head>
-<body>
-  <h1>Settings</h1>
-  <div class="form-group">
-    <label for="userId">User ID</label>
-    <input type="text" id="userId" name="userId">
-  </div>
-  <div class="form-group">
-    <label for="groupIds">Group IDs (comma separated)</label>
-    <input type="text" id="groupIds" name="groupIds">
-  </div>
-  <button id="save">Save</button>
-  <div id="status"></div>
+  <head>
+    <meta charset="UTF-8" />
+    <title>IkihajiTube Settings</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        width: 350px;
+        padding: 15px;
+        background-color: #f0f2f5;
+      }
+      h1 {
+        text-align: center;
+        color: #1c1e21;
+        font-size: 20px;
+        margin-top: 0;
+      }
+      button {
+        width: 100%;
+        padding: 10px;
+        background-color: #5865f2;
+        color: white;
+        border: none;
+        cursor: pointer;
+        border-radius: 5px;
+        font-size: 16px;
+        transition: background-color 0.2s;
+      }
+      button:hover {
+        background-color: #4752c4;
+      }
+      .form-group {
+        margin-bottom: 15px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+        color: #606770;
+        font-weight: bold;
+      }
+      input[type="text"],
+      select {
+        width: 100%;
+        padding: 8px;
+        box-sizing: border-box;
+        border: 1px solid #dddfe2;
+        border-radius: 5px;
+      }
+      #status {
+        margin-top: 10px;
+        text-align: center;
+      }
+      #profile-info {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 20px;
+        padding: 15px;
+        background-color: #fff;
+        border-radius: 8px;
+        border: 1px solid #dddfe2;
+      }
 
-  <script src="./popup.js"></script>
-</body>
+      .avatar {
+        width: 64px;
+        height: 64px;
+        border-radius: 50%;
+        margin-bottom: 0;
+      }
+      .profile-name {
+        font-size: 18px;
+        font-weight: bold;
+        color: #1c1e21;
+      }
+      .guild-info {
+        display: flex;
+        align-items: center;
+        margin-top: 15px;
+        width: 100%;
+        padding: 10px;
+        background-color: #f6f6f6;
+        border-radius: 5px;
+      }
+      .guild-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+      }
+      .guild-name {
+        font-size: 16px;
+        color: #333;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>IkihajiTube Settings</h1>
+
+    <div id="user-info" style="display: none">
+      <div id="profile-info">
+        <img id="user-avatar" class="avatar" alt="User Avatar" />
+        <p id="user-name" class="profile-name"></p>
+      </div>
+
+      <div class="form-group">
+        <label for="guild-select">Select a Server</label>
+        <select id="guild-select" name="guild-select"></select>
+      </div>
+
+      <div id="selected-guild-info" class="guild-info" style="display: none">
+        <img id="guild-avatar" class="guild-avatar" alt="Guild Avatar" />
+        <span id="guild-name" class="guild-name"></span>
+      </div>
+
+      <input type="text" id="userId" name="userId" readonly hidden />
+      <input type="text" id="groupIds" name="groupIds" readonly hidden />
+
+      <br />
+      <button id="save">Save</button>
+    </div>
+
+    <div id="status"></div>
+
+    <button id="login-button">Login</button>
+
+    <script src="./popup.js"></script>
+  </body>
 </html>
