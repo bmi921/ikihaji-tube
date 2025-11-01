@@ -70,20 +70,16 @@ export const app = new Elysia({
       // biome-ignore lint/suspicious/noConsoleLog:
       console.log(`[POST /viewing-history] groupId: ${groupId}, userId: ${userId}, body:`, body);
 
-      // 1. Upsert Group
       await db.insert(groups).values({ id: groupId }).onConflictDoNothing();
 
-      // 2. Upsert User
       await db.insert(users).values({ id: userId, groupId }).onConflictDoNothing();
 
       if (body.length === 0) {
         return { status: 200, body: 'No new videos to add.' };
       }
 
-      // 3. Upsert Videos
       await db.insert(videos).values(body).onConflictDoNothing();
 
-      // 4. Insert Viewing History
       const historyEntries = body.map(video => ({
         userId,
         videoId: video.id,

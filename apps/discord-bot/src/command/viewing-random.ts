@@ -1,4 +1,4 @@
-import { type CommandInteraction, EmbedBuilder, type GuildMember } from 'discord.js';
+import type { CommandInteraction, GuildMember } from 'discord.js';
 import { getUsers } from '#discord-bot/util/get-users';
 
 export const viewingRandomCommand = async (interaction: CommandInteraction) => {
@@ -21,8 +21,8 @@ export const viewingRandomCommand = async (interaction: CommandInteraction) => {
       }
     },
     async message => {
-      if (message instanceof EmbedBuilder) {
-        await interaction.editReply({ embeds: [message] });
+      if (message) {
+        await interaction.editReply(message);
       } else {
         await interaction.editReply(message);
       }
@@ -85,7 +85,8 @@ export const viewingRandomCommand = async (interaction: CommandInteraction) => {
 export const viewingRandom = async (
   groupId: string,
   userIdToGuildMember: (userId: string) => Promise<GuildMember | null>,
-  reply: (message: string | EmbedBuilder) => Promise<void>,
+  // reply: (message: string | EmbedBuilder) => Promise<void>,
+  reply: (message: string) => Promise<void>,
 ) => {
   const users = await getUsers(groupId);
 
@@ -94,12 +95,7 @@ export const viewingRandom = async (
 
   const randomUser = users[Math.floor(Math.random() * users.length)];
   if (!randomUser) {
-    await reply(
-      new EmbedBuilder()
-        .setTitle('視聴履歴がありません')
-        .setDescription('まずは動画を視聴してみましょう！')
-        .setColor(0xc37d9b),
-    );
+    await reply('視聴履歴がありません');
     return;
   }
 
@@ -107,12 +103,7 @@ export const viewingRandom = async (
   if (!randomVideo) {
     // biome-ignore lint/suspicious/noConsoleLog:
     console.log(`User ${randomUser.id} has no viewing history.`);
-    await reply(
-      new EmbedBuilder()
-        .setTitle('視聴履歴がありません')
-        .setDescription('まずは動画を視聴してみましょう！')
-        .setColor(0xc37d9b),
-    );
+    await reply('視聴履歴がありません');
     return;
   }
 

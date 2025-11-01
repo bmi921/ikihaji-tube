@@ -101,24 +101,26 @@ client.once(Events.ClientReady, async client => {
       await Promise.all(
         webhooks.map(async webhook => {
           await viewingSummary(
+            webhook.guildId,
             async userId => {
               const guild = await client.guilds.fetch(webhook.guildId);
 
               return await guild.members.fetch(userId);
             },
-            async embeds => {
-              await webhook.send({ embeds });
+            async message => {
+              await webhook.send({ content: message });
             },
           );
 
           await viewingRandom(
+            webhook.guildId,
             async userId => {
               const guild = await client.guilds.fetch(webhook.guildId);
 
               return await guild.members.fetch(userId);
             },
-            async embeds => {
-              await webhook.send({ embeds });
+            async message => {
+              await webhook.send({ content: message });
             },
           );
         }),

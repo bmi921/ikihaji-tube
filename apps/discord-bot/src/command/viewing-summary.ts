@@ -1,5 +1,5 @@
 import type { User, Video } from '@ikihaji-tube/core/model';
-import { type CommandInteraction, EmbedBuilder, type GuildMember } from 'discord.js';
+import type { CommandInteraction, GuildMember } from 'discord.js';
 import { getUsers } from '#discord-bot/util/get-users';
 
 type VideoAndUserRelation = {
@@ -28,8 +28,8 @@ export const viewingSummaryCommand = async (interaction: CommandInteraction) => 
     },
     // stringまたはEmbedBuilderを受け取るreply関数
     async message => {
-      if (message instanceof EmbedBuilder) {
-        await interaction.editReply({ embeds: [message] });
+      if (message) {
+        await interaction.editReply(message);
       } else {
         await interaction.editReply(message);
       }
@@ -40,7 +40,8 @@ export const viewingSummaryCommand = async (interaction: CommandInteraction) => 
 export const viewingSummary = async (
   groupId: string,
   userIdToGuildMember: (userId: string) => Promise<GuildMember | null>,
-  reply: (message: string | EmbedBuilder) => Promise<void>,
+  // reply: (message: string | EmbedBuilder) => Promise<void>,
+  reply: (message: string) => Promise<void>,
 ) => {
   const users = await getUsers(groupId);
 
@@ -60,16 +61,8 @@ export const viewingSummary = async (
     }, [])
     .filter(relation => relation.users.length >= 2);
 
-  // 2. 複数人が視聴した動画がない場合: EmbedBuilderで返信する
   if (videoAndUserRelations.length === 0) {
-    await reply(
-      new EmbedBuilder()
-        .setTitle('複数人が視聴した動画はありません')
-        .setDescription('まずは動画を視聴してみましょう！')
-        .setFooter({ text: 'Videos viewed by multiple users' })
-        .setTimestamp()
-        .setColor(0xc37d9b),
-    );
+    await reply('複数人が視聴した動画はありません');
     return;
   }
 
@@ -78,12 +71,7 @@ export const viewingSummary = async (
   const randomRelation = videoAndUserRelations[randomIndex];
 
   if (!randomRelation) {
-    await reply(
-      new EmbedBuilder()
-        .setTitle('視聴履歴が見つかりませんでした')
-        .setDescription('もう一度お試しください。')
-        .setColor(0xc37d9b),
-    );
+    await reply('視聴履歴が見つかりませんでした');
     return;
   }
 
@@ -111,11 +99,6 @@ export const viewingSummary = async (
     // 成功パターンに絞って処理を完了します)
   } else {
     // ユーザー情報が取得できなかった場合も、念のため「視聴履歴なし」のEmbedで代替
-    await reply(
-      new EmbedBuilder()
-        .setTitle('視聴ユーザーが見つかりませんでした')
-        .setDescription('データベースとDiscordのユーザー情報に差異がある可能性があります。')
-        .setColor(0xc37d9b),
-    );
+    await reply('視聴ユーザーが見つかりませんでした');
   }
 };
