@@ -22,3 +22,9 @@ CREATE TABLE public.viewing_history (
   CONSTRAINT viewing_histories_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id),
   CONSTRAINT viewing_histories_video_id_fkey FOREIGN KEY (video_id) REFERENCES public.videos(id)
 );
+CREATE TABLE public.webhooks (
+  group_id bigint NOT NULL,
+  url text NOT NULL,
+  CONSTRAINT webhooks_pkey PRIMARY KEY (group_id),
+  CONSTRAINT webhooks_group_id_fkey FOREIGN KEY (group_id) REFERENCES public.groups(id) ON DELETE CASCADE
+);

@@ -5,6 +5,14 @@ export const groups = pgTable('groups', {
   id: text('id').primaryKey(),
 });
 
+// === webhooks table ===
+export const webhooks = pgTable('webhooks', {
+  groupId: text('group_id')
+    .primaryKey()
+    .references(() => groups.id, { onDelete: 'cascade' }),
+  url: text('url').notNull(),
+});
+
 // === users table ===
 export const users = pgTable('users', {
   id: text('id').primaryKey(),

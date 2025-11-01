@@ -3,7 +3,7 @@ import type { User, Video } from '@ikihaji-tube/core/model';
 import { eq, inArray } from 'drizzle-orm';
 import { Elysia, type TSchema, t } from 'elysia';
 import { db } from '../../db/db';
-import { groups, users, videos, viewingHistory } from '../../db/schema';
+import { groups, users, videos, viewingHistory, webhooks } from '../../db/schema';
 
 export const app = new Elysia({
   prefix: '/api',
@@ -63,6 +63,25 @@ export const app = new Elysia({
     return resultUsers;
   })
   .post(
+    '/groups/:groupId/webhook',
+    async ({ body, params }) => {
+      const { groupId } = params;
+      const { url } = body;
+
+      await db.insert(webhooks).values({ groupId, url }).onConflictDoUpdate({
+        target: webhooks.groupId,
+        set: { url },
+      });
+
+      return { status: 200, body: 'Webhook registered.' };
+    },
+    {
+      body: t.Object({
+        url: t.String(),
+      }),
+    },
+  )
+  .post(
     '/groups/:groupId/users/:userId/viewing-history',
     async ({ body, params }) => {
       const { groupId, userId } = params;
@@ -102,6 +121,36 @@ export const app = new Elysia({
       ),
     },
   )
+  .get('/cron', async () => {
+    const allWebhooks = await db.select().from(webhooks);
+
+    for (const webhook of allWebhooks) {
+      try {
+        const response = await fetch(webhook.url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ content: '<@BMI>' }),
+        });
+
+        if (!response.ok) {
+          const errorText = await response.text(); // Discordからのエラー詳細を取得
+          // biome-ignore lint/suspicious/noConsoleLog:
+          console.error(`Failed to send webhook to ${webhook.url}`);
+          // biome-ignore lint/suspicious/noConsoleLog:
+          console.error(`Discord API Error: Status ${response.status}, Details: ${errorText}`);
+          return; // このWebhookはスキップして次のWebhookへ
+        }
+      } catch (error) {
+        // biome-ignore lint/suspicious/noConsoleLog:
+        console.error(`Failed to send webhook (Network Error) to ${webhook.url}`, error);
+      }
+    }
+
+    return { status: 200, body: 'Cron job finished.' };
+  })
+
   .listen(process.env['PORT'] || 4000);
 
 // biome-ignore lint/suspicious/noConsoleLog: This log is necessary to verify that the server is running properly.
