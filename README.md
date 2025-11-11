@@ -15,13 +15,14 @@ IkihajiTube は、YouTube の視聴履歴（生き恥）を友達と共有し、
 
 
 ## ☘️ 使い方
-[最新リリース](https://github.com/bmi921/ikihaji-tube/releases/tag/v0.1.0)からchrome拡張機能である`scrobble-chrome-extension.crx`をダウンロードしてください。そのあと、
-[chrome拡張機能管理画面](chrome://extensions)の画面に`scrobble-chrome-extension.crx`ファイルをドラッグ&ドロップしてください。インストールできたら、拡張機能を起動します。ポップアップが表示されたら、`userId`, `groupId`を画面から入力してください。
+[拡張機能](https://chromewebstore.google.com/detail/ikihajitube-client/lgonkdolpefidckilfbpdgpkfilkbhie)をダウンロード後、拡張機能を開いて、discordにログインをしてください。
 
-- `userId`はdiscordのユーザーIDです。ユーザーIDは、discord上のアイコンをクリックし、「ユーザーIDをコピー」を押すことでクリップボードにコピーできます。
-- `groupId`は、ikihaji-tubeのディスコードボットを使用したいサーバーに招待し、`/groupid`コマンドを叩くことで確認できます。discordのギルドIDでと同じです。
+次に、discord botをサーバーに招待する必要があります。そして招待したサーバーを拡張機能から選択します。
 
-`/register`コマンドでは、一日一回、定期実行させることができます。使用したいチャンネルでコマンドを使用してください。
+[URL](https://discord.com/oauth2/authorize?client_id=1428369369699713108)より、使いたいdiscordサーバーにIkihajiTube botを招待します。
+
+
+その後、/registerコマンドを使いたいチャンネルで実行することで定期的に視聴履歴が共有されます。なお、新しくbot用のチャンネルを作成することをお勧めします。
 
 ## ✨ 特徴
 
