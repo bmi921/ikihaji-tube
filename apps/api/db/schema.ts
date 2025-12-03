@@ -1,4 +1,4 @@
-import { pgTable, text } from 'drizzle-orm/pg-core';
+import { pgTable, text, uuid } from 'drizzle-orm/pg-core';
 
 export const groups = pgTable('groups', {
   id: text('id').primaryKey(),
@@ -17,7 +17,9 @@ export const videos = pgTable('videos', {
 });
 
 export const viewingHistory = pgTable('viewing_history', {
-  id: text('id').primaryKey(),
-  userId: text('user_id'),
+  id: uuid('id').defaultRandom().primaryKey(),
+  userId: text('user_id')
+    .notNull()
+    .references(() => users.id, { onDelete: 'cascade' }),
   videoId: text('video_id').references(() => videos.id, { onDelete: 'cascade' }),
 });

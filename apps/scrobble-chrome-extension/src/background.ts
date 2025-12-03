@@ -5,7 +5,12 @@ import { getBaseUrl } from '@ikihaji-tube/core/util';
 import { match } from 'ts-pattern';
 
 chrome.runtime.onMessage.addListener(message => {
-  const baseUrl = getBaseUrl({ app: 'api' }).toString();
+  const baseUrl =
+    process.env.NODE_ENV === 'development' ? 'http://localhost:4000' : getBaseUrl({ app: 'api' }).toString();
+
+  // biome-ignore lint/suspicious/noConsoleLog: <explanation>
+  console.log(process.env['NODE_ENV'], baseUrl);
+
   const client = treaty<App>(baseUrl);
 
   match(message.action)

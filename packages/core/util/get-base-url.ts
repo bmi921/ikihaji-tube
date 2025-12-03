@@ -18,6 +18,13 @@ const getApiBaseUrl = () => {
     // if (process.env['NODE_ENV'] === 'production') {
     //   return new URL('https://swift-dorothy-bmi921-org-f011884e.koyeb.app');
     // }
+
+    if (process.env['NODE_ENV'] === undefined) {
+      // biome-ignore lint/suspicious/noConsoleLog: <explanation>
+      console.log('NODE_ENV: ', process.env['NODE_ENV']);
+      return new URL('http://localhost:4000');
+    }
+
     return new URL('https://swift-dorothy-bmi921-org-f011884e.koyeb.app');
 
     // return new URL(`http://localhost:${process.env['PORT'] || 4000}`);
