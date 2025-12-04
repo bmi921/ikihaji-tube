@@ -1,6 +1,10 @@
+import { treaty } from '@elysiajs/eden';
+import type { App } from '@ikihaji-tube/api';
+import { getBaseUrl } from '@ikihaji-tube/core/util';
 import { Cron } from 'croner';
 import { type ApplicationCommandData, Client, Events, GatewayIntentBits } from 'discord.js';
 import { match } from 'ts-pattern';
+import { filterCommand, filterCommandData } from './command/filter';
 import { groupIdCommand } from './command/group-id';
 import { registerCommand } from './command/register';
 import { viewingRandom, viewingRandomCommand } from './command/viewing-random';
@@ -32,14 +36,15 @@ const commands = [
     name: 'groupid',
     description: 'Display the group ID of this server.',
   },
+  filterCommandData.toJSON() as ApplicationCommandData,
 ] as const satisfies ApplicationCommandData[];
 
 client.on(Events.InteractionCreate, async interaction => {
-  if (!interaction.isCommand()) {
+  if (!interaction.isChatInputCommand()) {
     return;
   }
 
-  match(interaction.commandName as (typeof commands)[number]['name'])
+  match(interaction.commandName)
     .with('register', () => {
       // biome-ignore lint/suspicious/noConsoleLog:
       console.log('`/register` command is called in guild: ', interaction.guild?.name);
@@ -64,7 +69,12 @@ client.on(Events.InteractionCreate, async interaction => {
 
       groupIdCommand(interaction);
     })
-    .exhaustive();
+    .with('filter', () => {
+      // biome-ignore lint/suspicious/noConsoleLog:
+      console.log('`/filter` command is called in guild: ', interaction.guild?.name);
+
+      filterCommand(interaction);
+    });
 });
 
 client.on('guildCreate', async guild => {
@@ -112,6 +122,9 @@ client.once(Events.ClientReady, async client => {
             },
           );
 
+          const apiClient = treaty<App>(getBaseUrl({ app: 'api' }).toString());
+          const { data: prompt } = await apiClient.api.groups({ groupId: webhook.guildId }).filter.get();
+
           await viewingRandom(
             webhook.guildId,
             async userId => {
@@ -122,6 +135,7 @@ client.once(Events.ClientReady, async client => {
             async message => {
               await webhook.send({ content: message });
             },
+            prompt,
           );
         }),
       );
