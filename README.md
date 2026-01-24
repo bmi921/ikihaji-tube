@@ -9,7 +9,8 @@ IkihajiTube は、YouTube の視聴履歴（生き恥）を友達と共有し、
 機能を好きなサーバーで定期実行できます。
 
 
-![thumbnail-ikihajitube](https://github.com/user-attachments/assets/d80ae3db-79e2-4be0-a246-2d95371c317e)
+<img width="951" height="538" alt="スクリーンショット 2026-01-24 21 17 50" src="https://github.com/user-attachments/assets/83c1786e-68e0-4f45-ba1a-7ba91a00ed4e" />
+
 
 
 
