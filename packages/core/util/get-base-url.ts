@@ -21,7 +21,7 @@ const getApiBaseUrl = () => {
 
     if (process.env['NODE_ENV'] === undefined) {
       // biome-ignore lint/suspicious/noConsoleLog: <explanation>
-      console.log('NODE_ENV: ', process.env['NODE_ENV']);
+      console.log('NODE_ENV: ', process.env['NODE_ENV'], 'ENDPOINT: http://localhost:4000');
       return new URL('http://localhost:4000');
     }
 
