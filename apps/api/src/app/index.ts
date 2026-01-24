@@ -102,7 +102,13 @@ const groupRoutes = new Elysia({ prefix: '/groups/:groupId' })
         userId,
         videoId: video.id,
       }));
-      await db.insert(viewingHistory).values(historyEntries);
+      // await db.insert(viewingHistory).values(historyEntries);
+      await db
+        .insert(viewingHistory)
+        .values(historyEntries)
+        .onConflictDoNothing({
+          target: [viewingHistory.userId, viewingHistory.videoId],
+        });
 
       return { status: 201, body: 'Viewing history recorded.' };
     },

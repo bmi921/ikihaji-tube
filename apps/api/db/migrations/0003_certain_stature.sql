@@ -1,0 +1,1 @@
+-- ALTER TABLE "viewing_history" ADD CONSTRAINT "viewing_history_user_id_video_id_unique" UNIQUE("user_id","video_id");
