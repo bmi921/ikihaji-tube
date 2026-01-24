@@ -92,4 +92,11 @@ export const viewingRandom = async (
   }
 
   await reply(`<@${member.id}>はこの動画を視聴しました！\nhttps://www.youtube.com/watch?v=${randomVideo.id}`);
+
+  // TODO: ここで、DBからrandomVideo.idの動画のレコードを視聴履歴テーブルから削除する
+  const client = treaty<App>(getBaseUrl({ app: 'api' }).toString());
+  await client.api.groups({ groupId })['viewing-history'].delete({
+    videoId: randomVideo.id,
+    userIds: [originalContext.user.id],
+  });
 };

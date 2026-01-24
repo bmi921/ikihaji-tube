@@ -1,4 +1,7 @@
+import { treaty } from '@elysiajs/eden';
+import type { App } from '@ikihaji-tube/api';
 import type { User, Video } from '@ikihaji-tube/core/model';
+import { getBaseUrl } from '@ikihaji-tube/core/util';
 import type { CommandInteraction, GuildMember } from 'discord.js';
 import { getUsers } from '#discord-bot/util/get-users';
 
@@ -93,6 +96,13 @@ export const viewingSummary = async (
 
     // 文字列で返信
     await reply(`${mentions} はこの動画を一緒に視聴しました！\n${videoUrl}`);
+
+    // TODO: ここで、DBからrandomVideo.idの動画のレコードを視聴履歴テーブルから削除する
+    const client = treaty<App>(getBaseUrl({ app: 'api' }).toString());
+    await client.api.groups({ groupId })['viewing-history'].delete({
+      videoId: randomRelation.video.id,
+      userIds: randomRelation.users.map(u => u.id),
+    });
 
     // (補足: もしユーザー取得に失敗し、coViewersが2未満になってしまった場合は、
     // ここで返信せず処理を終えるか、エラーログを出すなどの対応が考えられますが、

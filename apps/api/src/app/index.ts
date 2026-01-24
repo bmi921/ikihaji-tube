@@ -1,6 +1,6 @@
 import { cors } from '@elysiajs/cors';
 import type { User, Video } from '@ikihaji-tube/core/model';
-import { eq, inArray } from 'drizzle-orm';
+import { and, eq, inArray } from 'drizzle-orm';
 import { Elysia, type TSchema, t } from 'elysia';
 import { db } from '../../db/db';
 import { groups, users, videos, viewingHistory } from '../../db/schema';
@@ -121,6 +121,35 @@ const groupRoutes = new Elysia({ prefix: '/groups/:groupId' })
         } satisfies Record<keyof Video, TSchema>),
       ),
     },
+  )
+  .delete(
+    '/viewing-history',
+    async ({ params, body }) => {
+      const { groupId } = params;
+      const { videoId, userIds } = body;
+
+      // check if userIds are empty
+      if (userIds.length === 0) {
+        return { status: 400, body: 'userIds cannot be empty.' };
+      }
+
+      // TODO: check if users belong to the group (security improvement)
+
+      await db
+        .delete(viewingHistory)
+        .where(and(eq(viewingHistory.videoId, videoId), inArray(viewingHistory.userId, userIds)));
+
+      // biome-ignore lint/suspicious/noConsoleLog:
+      console.log(`[DELETE /viewing-history] groupId: ${groupId}, videoId: ${videoId}, userIds: ${userIds}`);
+
+      return { status: 200, body: 'Viewing history deleted.' };
+    },
+    {
+      body: t.Object({
+        videoId: t.String(),
+        userIds: t.Array(t.String()),
+      }),
+    },
   );
 
 export const app = new Elysia({
@@ -138,6 +167,7 @@ export const app = new Elysia({
       'IkihajiTube Client プライバシーポリシー\n\n最終更新日: 2025年11月3日\n\n本プライバシーポリシーは、Chrome拡張機能「IkihajiTube Client」がユーザーデータをどのように収集、利用、共有するかを説明するものです。本拡張機能は、ユーザーのプライバシーとデータセキュリティを最優先事項として取り扱います。\n\n---\n1. 収集する情報とその利用目的\n\n本拡張機能は、その主要な機能である「YouTube視聴履歴の送信」を果たすため、以下の必要最小限のユーザーデータを収集し、利用します。\n\n収集するデータは、**ウェブ履歴（YouTube動画のタイトル、URL、視聴完了日時などの視聴に関連する情報）**、**認証情報（IkihajiTubeサービスとの連携に必要なOAuth認証トークン）**、YouTubeページ上での**動画視聴完了の検知に必要なユーザーアクティビティ**、および**ウェブサイトコンテンツ（動画のタイトルやURL）**に限られます。\n\nこれらのデータの唯一の利用目的は、ユーザーが認証した外部サービス**「IkihajiTube」のAPIエンドポイントへ視聴履歴データを安全に送信し、ユーザーアカウントの認証と連携を維持すること**にあります。\n\n---\n2. データの共有\n\n収集したデータは、拡張機能の単一の目的を達成するため、ユーザーが認証した**IkihajiTubeのAPIエンドポイント**に対してのみ送信・共有されます。この送信は、サービス提供の基幹機能であり、これ以外の目的でユーザーデータを第三者へ販売、賃貸、または不当に開示することは一切ありません。\n\n---\n3. データセキュリティ\n\n認証情報および設定情報は、ChromeのストレージAPIを通じてユーザーのブラウザ内に安全に保管されます。外部API（IkihajiTube API）との通信は、すべて業界標準の**HTTPS/SSL暗号化通信**を用いて行われ、データの安全な取り扱いを保証します。\n\n---\n4. 連絡先情報\n\n本プライバシーポリシーまたはデータ処理に関してご質問がある場合は、以下の連絡先までお問い合わせください。\n\nメールアドレス: [bmi921gm@gmail.com]',
   )
   .use(groupRoutes)
+
   .listen(process.env['PORT'] || 4000);
 
 // biome-ignore lint/suspicious/noConsoleLog: This log is necessary to verify that the server is running properly.
