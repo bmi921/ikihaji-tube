@@ -64,24 +64,11 @@ bun install
 
 ### 3. 環境変数
 
-`.env.example` をコピーして `.env` ファイルを作成し、中身を編集します。
-
-```bash
-cp .env.example .env
-```
-
-```env
-# .env
-DISCORD_BOT_TOKEN=YOUR_DISCORD_BOT_TOKEN
-DISCORD_GUILD_ID=YOUR_DISCORD_SERVER_ID
-```
-
-- `DISCORD_BOT_TOKEN`: [Discord Developer Portal](https://discord.com/developers/applications) で作成した Bot のトークン。
-- `DISCORD_GUILD_ID`: 開発者モードを有効にした Discord で、ボットを導入するサーバー名を右クリックして「サーバー ID をコピー」で取得した ID。
+`.env`ファイルは[開発者](https://github.com/bmi921)から受け取ってください。
 
 ### 4. アプリケーションの実行
 
-Docker コンテナ（データベース）を起動し、開発サーバーを起動します。
+[]Docker コンテナ（データベース）を起動し、開発サーバーを起動します。
 
 ```bash
 # データベースを起動
@@ -108,5 +95,4 @@ bun turbo run dev
 - `packages/core`: アプリケーション間で共有されるコアロジック・型定義
 - `packages/tsconfig`: 共有の TypeScript 設定
 
-## 📒 リリースノート
-- v0.1.0 2025/10/19 初期リリース 
+
